@@ -5,19 +5,19 @@ import time
 import json
 from telebot.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 
-# ملفات التخزين
+
 TOKEN_FILE = "bot_token.txt"
 CONFIG_FILE = "config.json"
 LANG_FILE = "languages.json"
 
-# ألوان للطباعة في التيرمكس (Console)
+
 class Colors:
     HEADER = '\033[95m'
     OKBLUE = '\033[94m'
     OKCYAN = '\033[96m'
-    OKGREEN = '\033[92m'  # أخضر
-    WARNING = '\033[93m'  # أصفر
-    FAIL = '\033[91m'     # أحمر
+    OKGREEN = '\033[92m'  
+    WARNING = '\033[93m'  
+    FAIL = '\033[91m'     
     ENDC = '\033[0m'
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
@@ -45,13 +45,13 @@ def save_languages():
 def get_bot_token():
     config = load_config()
 
-    # تحقق من خيار "لا تسألني مجدداً"
+    
     if config.get("skip_token_prompt", False):
         if os.path.exists(TOKEN_FILE):
             with open(TOKEN_FILE, "r") as f:
                 return f.read().strip()
 
-    # طلب التوكن أو تغييره
+    
     print("\n[?] Do you want to change the Telegram Bot Token?")
     print("[1] Yes")
     print("[2] No")
@@ -103,7 +103,7 @@ def get_bot_token():
             print(f"{Colors.OKGREEN}[+] تم حفظ التوكن بنجاح!{Colors.ENDC}")
             return token
 
-# تحميل اللغات والبيانات
+
 user_languages = load_languages()
 
 messages = {
@@ -144,11 +144,11 @@ messages = {
 def get_lang(user_id):
     return user_languages.get(str(user_id), 'ar')
 
-# بداية البوت
+
 TOKEN = get_bot_token()
 bot = telebot.TeleBot(TOKEN)
 
-# -- دوال التعامل مع اللغة --
+
 @bot.message_handler(commands=['start', 'lang'])
 def send_language_buttons(message):
     lang = get_lang(message.from_user.id)
@@ -158,7 +158,7 @@ def send_language_buttons(message):
         InlineKeyboardButton("العربية", callback_data='lang_ar'),
         InlineKeyboardButton("English", callback_data='lang_en')
     )
-    # إذا تم تفعيل خيار "لا تسألني" نضيف زر الإعدادات
+    
     config = load_config()
     if config.get("skip_token_prompt", False):
         markup.add(InlineKeyboardButton(messages[lang]['settings'], callback_data='settings'))
@@ -181,7 +181,7 @@ def handle_callback(call):
         return
 
     if call.data == 'settings':
-        # عرض التوكن الحالي وخيارات التعديل
+        
         with open(TOKEN_FILE, "r") as f:
             current_token = f.read().strip()
         text = messages[lang]['settings_info'].format(token=current_token)
@@ -218,10 +218,10 @@ def process_new_token(message):
     bot.send_message(message.chat.id, messages[lang]['token_updated'])
     print(f"{Colors.OKGREEN}[+] Token updated successfully from settings! ✅{Colors.ENDC}")
 
-    # إعادة تهيئة البوت بالتوكن الجديد
+    
     bot = telebot.TeleBot(new_token)
 
-# التعامل مع الملفات (webm to mp4 conversion)
+
 @bot.message_handler(content_types=['video', 'document'])
 def handle_file(message: Message):
     user_id = str(message.from_user.id)
@@ -267,7 +267,7 @@ def handle_file(message: Message):
     except Exception as e:
         bot.send_message(message.chat.id, messages[lang]['error'].format(error=str(e)))
 
-# طباعة ASCII art مع رسالة بداية تشغيل البوت
+
 ascii_art = """
 ⠀⠀
 ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠋⠁⠀⠀⠈⠉⠙⠻⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
@@ -287,7 +287,8 @@ ascii_art = """
 [•] Made By  : Black Beard
 [•] Telegram  : @Ilzci
 [•] GITHUB    : BlackBeardDe
-[•] VERSION   : 2.0
+[•] VERSION   : v2.0
+[•] Lang       : ar / en
 ━━━━━━━━━━━━━━━━━━━━━━━━━━
 The script has been turned on the telegram bot
 """
